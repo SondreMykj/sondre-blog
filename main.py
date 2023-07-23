@@ -68,7 +68,7 @@ class Comment(db.Model):
     text = db.Column(db.Text, nullable=False)
 
 
-# db.create_all()
+db.create_all()
 
 
 gravatar = Gravatar(app,
@@ -130,7 +130,6 @@ def register():
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
-    print("YES")
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -161,8 +160,6 @@ def logout():
 def show_post(post_id):
     requested_post = BlogPost.query.get(post_id)
     form = CommentForm()
-    for test in requested_post.comments:
-        print(test.text)
     if form.validate_on_submit():
         if current_user.is_authenticated:
             new_comment = Comment(
