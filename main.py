@@ -10,6 +10,7 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from functools import wraps
 from sqlalchemy.ext.declarative import declarative_base
 from flask_gravatar import Gravatar
+import os
 
 
 app = Flask(__name__)
@@ -17,8 +18,9 @@ app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
+
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -28,7 +30,7 @@ login_manager.init_app(app)
 Base = declarative_base()
 
 ##CONFIGURE TABLES
-
+# postgresql://blog_z4no_user:y8vTh1Kmew5fwrElKoCDFH2cWTH3fA1j@dpg-ciuighdgkuvoig8fdi7g-a.frankfurt-postgres.render.com/blog_z4no
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
