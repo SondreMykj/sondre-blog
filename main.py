@@ -11,6 +11,7 @@ from functools import wraps
 from sqlalchemy.ext.declarative import declarative_base
 from flask_gravatar import Gravatar
 import os
+import smtplib
 
 
 app = Flask(__name__)
@@ -18,6 +19,10 @@ app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
+sender = "mykjtest@gmail.com"
+password = "iliqhjbperevvvra"
+recipients = "mykj1992@gmail.com"
+subject = "Contact form"
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
@@ -182,9 +187,32 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
-    return render_template("contact.html")
+    if request.method == "POST":
+        contact_name = request.form["name"]
+        contact_email = request.form["email"]
+        contact_phone = request.form["phone"]
+        contact_message = request.form["message"]
+        message = f"Name: {contact_name}\n" \
+                  f"Email: {contact_email}\n" \
+                  f"Phone number: {contact_phone}\n\n" \
+                  f"Message: {contact_message}"
+        try:
+            with smtplib.SMTP("smtp.gmail.com") as connection:
+                connection.starttls()
+                connection.login(user=sender, password=password)
+                connection.sendmail(
+                    from_addr=sender,
+                    to_addrs=recipients,
+                    msg=f"Subject:{subject}\n\n{message}"
+                )
+                print("Successfully sent email")
+        except smtplib.SMTPException:
+            print("Error: unable to send email")
+        return render_template("contact.html", msg_sent=True)
+    else:
+        return render_template("contact.html", msg_sent=False)
 
 
 @app.route("/new-post", methods=["GET", "POST"])
