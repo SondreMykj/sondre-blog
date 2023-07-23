@@ -31,7 +31,6 @@ login_manager.init_app(app)
 Base = declarative_base()
 
 ##CONFIGURE TABLES
-# postgresql://blog_z4no_user:y8vTh1Kmew5fwrElKoCDFH2cWTH3fA1j@dpg-ciuighdgkuvoig8fdi7g-a.frankfurt-postgres.render.com/blog_z4no
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -135,7 +134,7 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        email = form.email.data
+        email = form.email.data.lower()
         password = form.password.data
         user = User.query.filter_by(email=email).first()
         if not user:
